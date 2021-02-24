@@ -3,7 +3,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-import { v4 as uuidv4 } from 'uuid';
+const { v4: uuidv4 } = require('uuid');
 
 const server = express();
 const BUILDPATH = "../frontend/build";
@@ -23,22 +23,28 @@ server.get("/api/revision", (req, res) => {
   res.send(revision());
 });
 
-// Serves the frontend app
-server.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
-});
-
 server.post('/enterFood', (req, res) => {
   body = req.body;
-
+  foodName = body.name;
+  generatedId = uuidv4();
+  res.end();
 });
 
 server.delete('/deleteFood', (req, res) => {
   body = req.body;
+  foodId = body.uuid;
+  res.end();
 });
 
 server.get('/getPantry', (req, res) => {
   body = req.body;
+  userId = body.userId;
+  res.end();
+});
+
+// Serves the frontend app
+server.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
 });
 
 server.use((err, req, res, next) => {
@@ -51,7 +57,9 @@ server.listen(PORT, () => {
 
   const readline = require("readline");
   readline.emitKeypressEvents(process.stdin);
-  process.stdin.setRawMode(true);
+  if(process.stdin.isTTY){
+    process.stdin.setRawMode(true);
+  }
   process.stdin.on("keypress", (str, key) => {
     if (key.name === "q") {
       console.log("Goodbye!");
