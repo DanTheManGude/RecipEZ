@@ -3,6 +3,7 @@ const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+import { v4 as uuidv4 } from 'uuid';
 
 const server = express();
 const BUILDPATH = "../frontend/build";
@@ -25,6 +26,19 @@ server.get("/api/revision", (req, res) => {
 // Serves the frontend app
 server.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
+});
+
+server.post('/enterFood', (req, res) => {
+  body = req.body;
+
+});
+
+server.delete('/deleteFood', (req, res) => {
+  body = req.body;
+});
+
+server.get('/getPantry', (req, res) => {
+  body = req.body;
 });
 
 server.use((err, req, res, next) => {
