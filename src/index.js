@@ -9,6 +9,8 @@ const server = express();
 const BUILDPATH = "../frontend/build";
 const PORT = process.env.PORT || 3030;
 
+var mongoClient = require('mongodb').MongoClient;
+
 server.use(cors());
 server.use(bodyParser.json());
 server.use(express.static(path.join(__dirname, BUILDPATH)));
@@ -25,21 +27,64 @@ server.get("/api/revision", (req, res) => {
 
 server.post('/enterFood', (req, res) => {
   body = req.body;
-  foodName = body.name;
+  foodName = body.Name;
+  userId = body.UserId;
   generatedId = uuidv4();
-  res.end();
+  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+    if(err) {
+      console.log(err);
+      res.end(JSON.stringify({"error": "Couldn't enter food."}), 404);
+    }
+    else{
+      var dbo = db.db("RecipEZ_DB");
+      var newFood = {"Food_Name": foodName, "Food_UUID": generatedId};
+      dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$push: {"Pantry_Foods": generatedId}});
+      dbo.collection('Food').insertOne(newFood, function(err, res){
+        if (err){
+          console.log(err);
+          res.end(JSON.stringify({"error": "Couldn't enter food."}), 404);
+        }
+      });
+      db.close();
+      res.end(JSON.stringify({"success": "Food entered."}), 200);
+    }
+  });
 });
 
 server.delete('/deleteFood', (req, res) => {
   body = req.body;
-  foodId = body.uuid;
-  res.end();
+  foodId = body.Uuid;
+  userId = body.UserId;
+  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+    if(err) {
+      console.log(err);
+      res.end(JSON.stringify({"error": "Couldn't delete food."}), 404);
+    }
+    else{
+      var dbo = db.db("RecipEZ_DB");
+      dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$pull: {"Pantry_Foods": foodId}});
+      db.close();
+    }
+  });
+  res.end(JSON.stringify({"success": "Food deleted."}), 200);
 });
 
 server.get('/getPantry', (req, res) => {
   body = req.body;
-  userId = body.userId;
-  res.end();
+  userId = body.UserId;
+  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+    if(err) {
+      console.log(err);
+      res.end(JSON.stringify({"error": "Couldn't get pantry."}), 404);
+    }
+    else{
+      var dbo = db.db("RecipEZ_DB");
+      dbo.collection('Pantry').findOne({"User_UUID": userId}, function(err, document) {
+        res.end(JSON.stringify(document), 200);
+      });
+      db.close();
+    }
+  });
 });
 
 // Serves the frontend app
