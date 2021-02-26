@@ -3,6 +3,12 @@ const monk = require("monk");
 const { cookbook, food, ingredient, pantry, recipe, user } = require("./test_data/data")
 require("dotenv").config();
 
+const populate_collection = async (db, name, data) => {
+  let collection = db.get(name);
+  await collection.drop();
+  await collection.insert(data);
+}
+
 const reloadData = async () => {
   const db = monk(process.env.MONGODB_URI, function(error, db) {
     if (error) {
@@ -10,24 +16,12 @@ const reloadData = async () => {
     }
   });
   try {
-    let collection = db.get('cookbook');
-    await collection.drop();
-    await collection.insert(cookbook);
-    collection = db.get('food');
-    await collection.drop();
-    await collection.insert(food);
-    collection = db.get('ingredient');
-    await collection.drop();
-    await collection.insert(ingredient);
-    collection = db.get('pantry');
-    await collection.drop();
-    await collection.insert(pantry);
-    collection = db.get('recipe');
-    await collection.drop();
-    await collection.insert(recipe);
-    collection = db.get('user');
-    await collection.drop();
-    await collection.insert(user);
+    await populate_collection(db, 'Cookbook', cookbook);
+    await populate_collection(db, 'Food', food);
+    await populate_collection(db, 'Ingredient', ingredient);
+    await populate_collection(db, 'Pantry', pantry);
+    await populate_collection(db, 'Recipe', recipe);
+    await populate_collection(db, 'User', user);
   } catch (error) {
     console.log(error);
   } finally {

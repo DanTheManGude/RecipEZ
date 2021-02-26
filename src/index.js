@@ -47,7 +47,7 @@ server.post("/api/signinUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
-    const users = db.get("user");
+    const users = db.get("User");
     const check = await users.findOne({
       "User_Name": username,
       "User_Password": password
@@ -65,7 +65,7 @@ server.post("/api/createUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
-    const users = db.get("user");
+    const users = db.get("User");
     const check = await users.findOne({
       "User_Name": username
     });
