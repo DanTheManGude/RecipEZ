@@ -1,4 +1,4 @@
-const { ping, revision } = require("./utils");
+const { ping, revision, getFood } = require("./utils");
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -8,6 +8,9 @@ const { v4: uuidv4 } = require('uuid');
 const server = express();
 const BUILDPATH = "../frontend/build";
 const PORT = process.env.PORT || 3030;
+
+const dbName = "RecipEZ_DB"
+const dbUrl = "mongodb://localhost:27017/"
 
 var mongoClient = require('mongodb').MongoClient;
 
@@ -30,13 +33,13 @@ server.post('/enterFood', (req, res) => {
   foodName = body.Name;
   userId = body.UserId;
   generatedId = uuidv4();
-  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+  mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
       res.end(JSON.stringify({"error": "Couldn't enter food."}), 404);
     }
     else{
-      var dbo = db.db("RecipEZ_DB");
+      var dbo = db.db(dbName);
       var newFood = {"Food_Name": foodName, "Food_UUID": generatedId};
       dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$push: {"Pantry_Foods": generatedId}});
       dbo.collection('Food').insertOne(newFood, function(err, res){
@@ -55,13 +58,13 @@ server.delete('/deleteFood', (req, res) => {
   body = req.body;
   foodId = body.Uuid;
   userId = body.UserId;
-  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+  mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
       res.end(JSON.stringify({"error": "Couldn't delete food."}), 404);
     }
     else{
-      var dbo = db.db("RecipEZ_DB");
+      var dbo = db.db(dbName);
       dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$pull: {"Pantry_Foods": foodId}});
       db.close();
     }
@@ -69,17 +72,26 @@ server.delete('/deleteFood', (req, res) => {
   res.end(JSON.stringify({"success": "Food deleted."}), 200);
 });
 
-server.get('/getPantry', (req, res) => {
+server.get('/getPantry', async (req, res) => {
   body = req.body;
   userId = body.UserId;
-  mongoClient.connect("mongodb://localhost:27017/", function(err, db) {
+  mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
       res.end(JSON.stringify({"error": "Couldn't get pantry."}), 404);
     }
     else{
-      var dbo = db.db("RecipEZ_DB");
-      dbo.collection('Pantry').findOne({"User_UUID": userId}, function(err, document) {
+      var dbo = db.db(dbName);
+      dbo.collection('Pantry').findOne({"User_UUID": userId}, async function(err, document) {
+        var idToName = [];
+        for(var i = 0; i < document.Pantry_Foods.length; i++){
+          var id = document.Pantry_Foods[i];
+          const foodName = await getFood(id);
+          var obj = {};
+          obj[id] = foodName;
+          idToName.push(obj);
+        }
+        document.Pantry_Foods = idToName;
         res.end(JSON.stringify(document), 200);
       });
       db.close();
