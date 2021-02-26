@@ -7,7 +7,7 @@ const monk = require("monk");
 const { v4: uuidv4 } = require("uuid");
 
 require("dotenv").config();
-const db = monk(process.env.MONGODB_URI, function(error, db) {
+const db = monk(process.env.MONGODB_URI, function(error) {
   if (error) {
      console.error("Db is not connected", error.message);
   }
