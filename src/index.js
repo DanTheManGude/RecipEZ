@@ -53,7 +53,7 @@ server.post("/api/signinUser", async (req, res, next) => {
       "User_Password": password
     });
     if (check)
-      res.send("Sign in successful.");
+      return res.send("Sign in successful.");
     res.status(401).send("Invalid username or password.");
   } catch (error) {
     next(error);
@@ -70,7 +70,7 @@ server.post("/api/createUser", async (req, res, next) => {
       "User_Name": username
     });
     if (check)
-      res.status(400).send("Username already taken.");
+      return res.status(400).send("Username already taken.");
     const new_user = {
       "User_Name": username,
       "User_Password": password,
