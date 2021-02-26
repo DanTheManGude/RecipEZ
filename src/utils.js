@@ -11,22 +11,22 @@ const reloadData = async () => {
   });
   try {
     let collection = db.get('cookbook');
-    collection.drop();
+    await collection.drop();
     await collection.insert(cookbook);
     collection = db.get('food');
-    collection.drop();
+    await collection.drop();
     await collection.insert(food);
     collection = db.get('ingredient');
-    collection.drop();
+    await collection.drop();
     await collection.insert(ingredient);
     collection = db.get('pantry');
-    collection.drop();
+    await collection.drop();
     await collection.insert(pantry);
     collection = db.get('recipe');
-    collection.drop();
+    await collection.drop();
     await collection.insert(recipe);
     collection = db.get('user');
-    collection.drop();
+    await collection.drop();
     await collection.insert(user);
   } catch (error) {
     console.log(error);

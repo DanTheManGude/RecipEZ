@@ -12,8 +12,6 @@ const db = monk(process.env.MONGODB_URI, function(error, db) {
      console.error("Db is not connected", error.message);
   }
 });
-// DB collections
-const users = db.get("user");
 
 const server = express();
 const BUILDPATH = "../frontend/build";
@@ -41,47 +39,47 @@ server.get("/*", (req, res) => {
 // Reload mock data
 server.post("/api/reload", (req, res) => {
   reloadData();
-  return res.send("Database loaded.")
+  res.send("Database loaded.")
 });
 
 // Sign in user
-server.post("/api/signinUser", async (req, res) => {
+server.post("/api/signinUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
+    const users = db.get("user");
     const check = await users.findOne({
       "User_Name": username,
       "User_Password": password
     });
     if (check)
-      return res.send("Sign in successful.");
-    return res.status(401).send("Invalid username or password.");
+      res.send("Sign in successful.");
+    res.status(401).send("Invalid username or password.");
   } catch (error) {
-    console.log(error.status)
-    return res.status(401).send("Invalid username or password.");
+    next(error);
   }
 });
 
 // Create user
-server.post("/api/createUser", async (req, res) => {
+server.post("/api/createUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
+    const users = db.get("user");
     const check = await users.findOne({
       "User_Name": username
     });
     if (check)
-      return res.status(400).send("Username already taken.");
+      res.status(400).send("Username already taken.");
     const new_user = {
       "User_Name": username,
       "User_Password": password,
       "User_UUID": uuidv4()
     }
     const created = await users.insert(new_user)
-    return res.send("User created.");
+    res.send("User created.");
   } catch (error) {
-    console.log(error.status)
-    return res.status(400).send("Username already taken.");
+    next(error);
   }
 });
 
