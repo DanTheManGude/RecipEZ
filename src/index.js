@@ -93,14 +93,16 @@ server.use((err, req, res, next) => {
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 
-  // const readline = require("readline");
-  // readline.emitKeypressEvents(process.stdin);
-  // process.stdin.setRawMode(true);
-  // process.stdin.on("keypress", (str, key) => {
-  //   if (key.name === "q") {
-  //     console.log("Goodbye!");
-  //     process.exit();
-  //   }
-  // });
-  // console.log("Press "q" to quit");
+  if (process.stdin.isTTY) {
+    const readline = require("readline");
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+    process.stdin.on("keypress", (str, key) => {
+      if (key.name === "q") {
+        console.log("Goodbye!");
+        process.exit();
+      }
+    });
+    console.log("Press 'q' to quit");
+  }
 });
