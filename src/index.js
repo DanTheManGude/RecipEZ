@@ -39,13 +39,13 @@ server.get("/*", (req, res) => {
 });
 
 // Reload mock data
-server.post("/reload", (req, res) => {
+server.post("/api/reload", (req, res) => {
   reloadData();
   return res.send("Database loaded.")
 });
 
 // Sign in user
-server.post("/signinUser", async (req, res) => {
+server.post("/api/signinUser", async (req, res) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
@@ -63,7 +63,7 @@ server.post("/signinUser", async (req, res) => {
 });
 
 // Create user
-server.post("/createUser", async (req, res) => {
+server.post("/api/createUser", async (req, res) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist

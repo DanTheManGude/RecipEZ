@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha './src/*.test.js'",
     "start": "concurrently \"npm run frontend\" \"npm run server\"",
+    "dev": "concurrently \"npm run frontend\" \"npm run dev-server\"",
     "prod": "npm run build && npm run server",
     "update": "npm install && cd frontend && npm install && cd ..",
     "hard-update": "rm package-lock.json && rm -rf node_modules/ && cd frontend && rm package-lock.json && rm -rf node_modules/ && cd .. && npm run update",
@@ -13,7 +14,7 @@
     "build": "cd frontend && npm run build && cd ..",
     "server": "node src/index.js",
     "frontend": "cd frontend && npm start",
-    "dev": "nodemon src/index.js"
+    "dev-server": "nodemon src/index.js"
   },
   "repository": {
     "type": "git",
