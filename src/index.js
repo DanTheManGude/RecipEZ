@@ -1,4 +1,10 @@
-const { reloadData, ping, revision } = require("./utils");
+const { 
+  reloadData, 
+  ping, 
+  revision, 
+  findUser,
+  createUser
+} = require("./utils");
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -37,9 +43,17 @@ server.get("/*", (req, res) => {
 });
 
 // Reload mock data
-server.post("/api/reload", (req, res) => {
-  reloadData();
-  res.send("Database loaded.")
+server.post("/reload", async (req, res) => {
+  try {
+    response = await reloadData();
+    if (response) {
+      res.send({"message": "Database loaded."});
+    } else {
+      res.status(400).send({"error": "Error writing to database."});
+    }
+  } catch (error) {
+    next(error);
+  }
 });
 
 // Sign in user
@@ -47,14 +61,11 @@ server.post("/api/signinUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
-    const users = db.get("User");
-    const check = await users.findOne({
-      "User_Name": username,
-      "User_Password": password
-    });
-    if (check)
-      return res.send("Sign in successful.");
-    res.status(401).send("Invalid username or password.");
+    const user = await findUser(db, username);
+    if (user.password === password) {
+      return res.send({"id": user._id});
+    }
+    res.status(401).send({"error": "Invalid username or password."});
   } catch (error) {
     next(error);
   }
@@ -65,19 +76,22 @@ server.post("/api/createUser", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     // validate username and password exist
-    const users = db.get("User");
-    const check = await users.findOne({
-      "User_Name": username
-    });
-    if (check)
-      return res.status(400).send("Username already taken.");
-    const new_user = {
-      "User_Name": username,
-      "User_Password": password,
-      "User_UUID": uuidv4()
+    const user = await findUser(db, username);
+    if (user !== null) {
+      return res.status(400).send({"error": "Username already taken."});
     }
-    const created = await users.insert(new_user)
-    res.send("User created.");
+    user_uuid = uuidv4();
+    const new_user = {
+      "username": username,
+      "password": password,
+      "user_uuid": user_uuid
+    };
+    const created = createUser(db, new_user);
+    if (created) {
+      return res.send({"id": user_uuid});
+    } else {
+      return res.status(404).send({"error": "Could not create user."});
+    }
   } catch (error) {
     next(error);
   }
