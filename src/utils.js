@@ -1,6 +1,7 @@
 var mongoClient = require('mongodb').MongoClient;
-const dbName = "RecipEZ_DB"
-const dbUrl = "mongodb://localhost:27017/"
+require("dotenv").config();
+const dbName = process.env.MONGODB_NAME;
+const dbUrl = process.env.MONGODB_URI;
 
 const ping = () => {
   return "pong";

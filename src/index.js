@@ -4,13 +4,16 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { v4: uuidv4 } = require('uuid');
+require("dotenv").config();
 
 const server = express();
 const BUILDPATH = "../frontend/build";
 const PORT = process.env.PORT || 3030;
 
-const dbName = "RecipEZ_DB"
-const dbUrl = "mongodb://localhost:27017/"
+const dbName = process.env.MONGODB_NAME;
+const dbUrl = process.env.MONGODB_URI;
+console.log(dbName)
+console.log(dbUrl)
 
 var mongoClient = require('mongodb').MongoClient;
 
@@ -28,15 +31,15 @@ server.get("/api/revision", (req, res) => {
   res.send(revision());
 });
 
-server.post('/enterFood', (req, res) => {
+server.post('/api/enterFood', (req, res) => {
   body = req.body;
-  foodName = body.Name;
-  userId = body.UserId;
+  foodName = body.name;
+  userId = body.userId;
   generatedId = uuidv4();
   mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
-      res.end(JSON.stringify({"error": "Couldn't enter food."}), 404);
+      res.status(500).send({"error": "Couldn't enter food."});
     }
     else{
       var dbo = db.db(dbName);
@@ -45,23 +48,23 @@ server.post('/enterFood', (req, res) => {
       dbo.collection('Food').insertOne(newFood, function(err, res){
         if (err){
           console.log(err);
-          res.end(JSON.stringify({"error": "Couldn't enter food."}), 404);
+          res.status(500).send({"error": "Couldn't enter food."});
         }
       });
       db.close();
-      res.end(JSON.stringify({"success": "Food entered."}), 200);
+      res.status(200).send({"success": "Food entered."});
     }
   });
 });
 
-server.delete('/deleteFood', (req, res) => {
+server.delete('/api/deleteFood', (req, res) => {
   body = req.body;
-  foodId = body.Uuid;
-  userId = body.UserId;
+  foodId = body.uuid;
+  userId = body.userId;
   mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
-      res.end(JSON.stringify({"error": "Couldn't delete food."}), 404);
+      res.status(500).send({"error": "Couldn't delete food."});
     }
     else{
       var dbo = db.db(dbName);
@@ -69,16 +72,16 @@ server.delete('/deleteFood', (req, res) => {
       db.close();
     }
   });
-  res.end(JSON.stringify({"success": "Food deleted."}), 200);
+  res.status(200).send({"success": "Food deleted."});
 });
 
-server.get('/getPantry', async (req, res) => {
+server.get('/api/getPantry', async (req, res) => {
   body = req.body;
-  userId = body.UserId;
+  userId = body.userId;
   mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
-      res.end(JSON.stringify({"error": "Couldn't get pantry."}), 404);
+      res.status(500).send({"error": "Couldn't get pantry."});
     }
     else{
       var dbo = db.db(dbName);
@@ -92,7 +95,7 @@ server.get('/getPantry', async (req, res) => {
           idToName.push(obj);
         }
         document.Pantry_Foods = idToName;
-        res.end(JSON.stringify(document), 200);
+        res.status(200).send(document);
       });
       db.close();
     }
