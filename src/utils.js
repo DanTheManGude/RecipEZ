@@ -1,22 +1,31 @@
-const fs = require("fs");
-const monk = require("monk");
-const { cookbook, food, ingredient, pantry, recipe, user } = require("./test_data/data")
+const { 
+  cookbook,
+  food,
+  ingredient,
+  pantry,
+  recipe,
+  user 
+} = require("./test_data/data")
+const mongoClient = require('mongodb').MongoClient;
 require("dotenv").config();
 
-const dropDatabase = () => {
-  let db = monk(process.env.MONGODB_URI, function(error) {
-    if (error) {
-       console.error("Db is not connected", error.message);
-    }
-  }).then((db) => {
-    db._db.dropDatabase();
-  });
+const dbName = process.env.MONGODB_NAME;
+const dbUrl = process.env.MONGODB_URI;
+
+const connect = async () => {
+  const client = await mongoClient.connect(process.env.MONGODB_URI);
+  const db = client.db(process.env.MONGODB_NAME);
+  return db;
+}
+
+const dropDatabase = async () => {
+  const db = await connect();
+  db.dropDatabase();
 }
 
 const populateCollection = async (db, name, data) => {
   try {
-    let collection = db.get(name);
-    await collection.insert(data);
+    await db.collection(name).insertMany(data);
   } catch (error) {
     throw(error);
   }
@@ -24,12 +33,8 @@ const populateCollection = async (db, name, data) => {
 
 const reloadData = async () => {
   try {
-    dropDatabase();
-    const db = monk(process.env.MONGODB_URI, function(error) {
-      if (error) {
-         console.error("Db is not connected", error.message);
-      }
-    });
+    await dropDatabase();
+    const db = await connect();
     await populateCollection(db, "cookbook", cookbook);
     await populateCollection(db, "food", food);
     await populateCollection(db, "ingredient", ingredient);
@@ -41,6 +46,7 @@ const reloadData = async () => {
     return false;
   }
 }
+require("dotenv").config();
 
 const ping = () => {
   return "pong";
@@ -54,21 +60,27 @@ const revision = () => {
 };
 
 const findUser = async (db, username) => {
-  const users = db.get("user");
-  return await users.findOne({
+  return await db.collection("user").findOne({
     "username": username
   });
 }
 
 const createUser = async (db, new_user) => {
-  const users = db.get("user");
-  return await users.insert(new_user);
+  return await db.collection("user").insertOne(new_user);
 }
 
+async function getFood(uuid) {
+  const db = await connect()
+  const food = await db.collection('Food').findOne({"Food_UUID": uuid});
+  return food["Food_Name"];
+};
+
 module.exports = { 
+  connect,
   reloadData,
   ping,
   revision,
   findUser,
-  createUser
+  createUser,
+  getFood
 };
