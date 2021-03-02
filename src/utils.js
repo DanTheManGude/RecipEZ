@@ -21,4 +21,11 @@ async function getFood(uuid) {
   return food["Food_Name"];
 };
 
-module.exports = { ping, revision, getFood };
+async function getCookbook(uuid) {
+  const db = await mongoClient.connect(dbUrl);
+  var dbo = db.db(dbName);
+  const food = await dbo.collection('Cookbook').findOne({"User_UUID": uuid});
+  return food["Cookbook_UUID"];
+};
+
+module.exports = { ping, revision, getFood, getCookbook };

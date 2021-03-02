@@ -1,4 +1,4 @@
-const { ping, revision, getFood } = require("./utils");
+const { ping, revision, getFood, getCookbook } = require("./utils");
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -101,6 +101,56 @@ server.get('/api/getPantry', async (req, res) => {
     }
   });
 });
+
+server.post('/api/createRecipe', async (req, res) => {
+  var body = req.body;
+  const name = body.name;
+  const userId = body.userId;
+  const ingredients = body.ingredients;
+  const generatedId = uuidv4();
+  mongoClient.connect(dbUrl, async function(err, db) {
+    if(err){
+      console.log(err);
+      res.status(500).send({"error": "Couldn't create recipe."});
+    }
+    else{
+      var dbo = db.db(dbName);
+      const cookbookId = await getCookbook(userId);
+      const newRecipe = {"Cookbook_UUID": cookbookId, "Recipe_UUID": generatedId, "Recipe_Ingredients": ingredients, "Recipe_Name": name};
+      dbo.collection('Recipe').insertOne(newRecipe, function(err, document) {
+        if (err){
+          console.log(err);
+          res.status(500).send({"error": "Couldn't enter recipe."});
+        }else{
+          res.status(200).send({"success": "Recipe entered."});
+        }
+      });
+      db.close();
+    }
+  })
+});
+
+server.get('/api/searchRecipes', (req, res) => {
+  var body = req.body;
+  const keyword = body.keyword;
+  mongoClient.connect(dbUrl, function(err, db) {
+    if(err){
+      console.log(err);
+      res.status(500).send({"error": "Couldn't search recipes."});
+    } else {
+      var dbo = db.db(dbName);
+      dbo.collection('Recipe').find({"Recipe_Name":{$regex: keyword}}).toArray(function(err, document) {
+        if (err){
+          console.log(err);
+          res.status(500).send({"error": "Couldn't search recipes."});
+        }else{
+          res.status(200).send({"recipes": document});
+        }
+      });
+    }
+    db.close();
+  })
+})
 
 // Serves the frontend app
 server.get("/*", (req, res) => {
