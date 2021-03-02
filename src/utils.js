@@ -71,8 +71,8 @@ const createUser = async (db, new_user) => {
 
 async function getFood(uuid) {
   const db = await connect()
-  const food = await db.collection('Food').findOne({"Food_UUID": uuid});
-  return food["Food_Name"];
+  const food = await db.collection('food').findOne({"food_uuid": uuid});
+  return food["food_name"];
 };
 
 module.exports = { 

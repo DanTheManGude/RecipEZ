@@ -109,9 +109,9 @@ server.post('/api/enterFood', (req, res) => {
     }
     else{
       var dbo = db.db(dbName);
-      var newFood = {"Food_Name": foodName, "Food_UUID": generatedId};
-      dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$push: {"Pantry_Foods": generatedId}});
-      dbo.collection('Food').insertOne(newFood, function(err, res){
+      var newFood = {"food_name": foodName, "food_uuid": generatedId};
+      dbo.collection('pantry').updateOne({"user_uuid": userId}, {$push: {"pantry_foods": generatedId}});
+      dbo.collection('food').insertOne(newFood, function(err, res){
         if (err){
           console.log(err);
           res.status(500).send({"error": "Couldn't enter food."});
@@ -134,7 +134,7 @@ server.delete('/api/deleteFood', (req, res) => {
     }
     else{
       var dbo = db.db(dbName);
-      dbo.collection('Pantry').updateOne({"User_UUID": userId}, {$pull: {"Pantry_Foods": foodId}});
+      dbo.collection('pantry').updateOne({"user_uuid": userId}, {$pull: {"pantry_foods": foodId}});
       db.close();
     }
   });
@@ -151,16 +151,16 @@ server.get('/api/getPantry', async (req, res) => {
     }
     else{
       var dbo = db.db(dbName);
-      dbo.collection('Pantry').findOne({"User_UUID": userId}, async function(err, document) {
+      dbo.collection('pantry').findOne({"user_uuid": userId}, async function(err, document) {
         var idToName = [];
-        for(var i = 0; i < document.Pantry_Foods.length; i++){
-          var id = document.Pantry_Foods[i];
+        for(var i = 0; i < document.pantry_foods.length; i++){
+          var id = document.pantry_foods[i];
           const foodName = await getFood(id);
           var obj = {};
           obj[id] = foodName;
           idToName.push(obj);
         }
-        document.Pantry_Foods = idToName;
+        document.pantry_foods = idToName;
         res.status(200).send(document);
       });
       db.close();
