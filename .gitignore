@@ -1,3 +1,6 @@
 # dependencies
 .env
+
+# build files
 /node_modules
+frontend/package-lock.json
