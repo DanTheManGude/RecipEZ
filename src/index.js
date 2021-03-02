@@ -57,6 +57,9 @@ server.get("/api/revision", (req, res) => {
 // Sign in user
 server.post("/api/signinUser", async (req, res, next) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(401).send({"error": "Username and password required."});
+  }
   try {
     // validate username and password exist
     const db = await connect();
@@ -73,6 +76,9 @@ server.post("/api/signinUser", async (req, res, next) => {
 // Create user
 server.post("/api/createUser", async (req, res, next) => {
   const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).send({"error": "Username and password required."});
+  }
   try {
     // validate username and password exist
     const db = await connect();

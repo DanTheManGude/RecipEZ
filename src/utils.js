@@ -9,9 +9,6 @@ const {
 const mongoClient = require('mongodb').MongoClient;
 require("dotenv").config();
 
-const dbName = process.env.MONGODB_NAME;
-const dbUrl = process.env.MONGODB_URI;
-
 const connect = async () => {
   const client = await mongoClient.connect(process.env.MONGODB_URI);
   const db = client.db(process.env.MONGODB_NAME);
