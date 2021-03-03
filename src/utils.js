@@ -78,8 +78,8 @@ async function getFood(uuid) {
 async function getCookbook(uuid) {
   const db = await mongoClient.connect(dbUrl);
   var dbo = db.db(dbName);
-  const food = await dbo.collection('Cookbook').findOne({"User_UUID": uuid});
-  return food["Cookbook_UUID"];
+  const food = await dbo.collection('cookbook').findOne({"user_uuid": uuid});
+  return food["cookbook_uuid"];
 };
 
 module.exports = { ping, revision, getFood, getCookbook };

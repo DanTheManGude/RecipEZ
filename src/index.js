@@ -189,8 +189,8 @@ server.post('/api/createRecipe', async (req, res) => {
     else{
       var dbo = db.db(dbName);
       const cookbookId = await getCookbook(userId);
-      const newRecipe = {"Cookbook_UUID": cookbookId, "Recipe_UUID": generatedId, "Recipe_Ingredients": ingredients, "Recipe_Name": name};
-      dbo.collection('Recipe').insertOne(newRecipe, function(err, document) {
+      const newRecipe = {"cookbook_uuid": cookbookId, "recipe_uuid": generatedId, "recipe_ingredients": ingredients, "recipe_name": name};
+      dbo.collection('recipe').insertOne(newRecipe, function(err, document) {
         if (err){
           console.log(err);
           res.status(500).send({"error": "Couldn't enter recipe."});
@@ -212,7 +212,7 @@ server.get('/api/searchRecipes', (req, res) => {
       res.status(500).send({"error": "Couldn't search recipes."});
     } else {
       var dbo = db.db(dbName);
-      dbo.collection('Recipe').find({"Recipe_Name":{$regex: keyword}}).toArray(function(err, document) {
+      dbo.collection('recipe').find({"recipe_Name":{$regex: keyword}}).toArray(function(err, document) {
         if (err){
           console.log(err);
           res.status(500).send({"error": "Couldn't search recipes."});
