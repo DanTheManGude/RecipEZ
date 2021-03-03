@@ -212,7 +212,7 @@ server.get('/api/searchRecipes', (req, res) => {
       res.status(500).send({"error": "Couldn't search recipes."});
     } else {
       var dbo = db.db(dbName);
-      dbo.collection('recipe').find({"recipe_Name":{$regex: keyword}}).toArray(function(err, document) {
+      dbo.collection('recipe').find({"recipe_name":{$regex: keyword}}).toArray(function(err, document) {
         if (err){
           console.log(err);
           res.status(500).send({"error": "Couldn't search recipes."});
