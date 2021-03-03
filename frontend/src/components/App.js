@@ -8,11 +8,11 @@ function App() {
   return (
     <div id="app">
       <ul>
-        <Link to="/page1">
-          <li>Page 1</li>
+        <Link to="/signup">
+          <li>Sign Up</li>
         </Link>
-        <Link to="/page2">
-          <li>Page 2</li>
+        <Link to="/signin">
+          <li>Sign In</li>
         </Link>
         <Link to="/home">
           <li>Home</li>
