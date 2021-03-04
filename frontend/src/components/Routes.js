@@ -5,6 +5,7 @@ import { Route, Redirect, Switch } from "react-router-dom";
 
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import NewRecipe from "./NewRecipe";
 
 import SearchRecipe from "./SearchRecipe.js"
 
@@ -18,6 +19,7 @@ function Routes() {
     <Switch>
       <Route path="/signin" component={SignIn} />
       <Route path="/signup" component={SignUp} />
+      <Route path="/newRecipe" component={NewRecipe} />
 
       <Route path="/searchRecipe" component={SearchRecipe} />
 
