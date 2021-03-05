@@ -6,6 +6,7 @@ function IngredientInput(props) {
   const {
     value: { amount, food },
     updateValue,
+    removeIngredient,
   } = props;
 
   const handleAmount = (e) => {
@@ -21,6 +22,9 @@ function IngredientInput(props) {
       <span>
         Amount: <input type="text" value={amount} onChange={handleAmount} />
         Food: <input type="text" value={food} onChange={handleFood} />
+        <button type="button" onClick={removeIngredient}>
+          Remove Ingredient
+        </button>
       </span>
     </div>
   );

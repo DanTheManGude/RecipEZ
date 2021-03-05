@@ -35,6 +35,15 @@ function NewRecipe() {
     });
   };
 
+  const getRemoveInstruction = (index) => () => {
+    setInstructions((prevState) => {
+      const newState = [...prevState];
+      newState.splice(index, 1);
+
+      return newState;
+    });
+  };
+
   const appendInstruction = () => {
     setInstructions((prevState) => {
       const newState = [...prevState];
@@ -56,6 +65,15 @@ function NewRecipe() {
     setIngredients((prevState) => {
       const newState = [...prevState];
       newState.push(emptyIngredient);
+
+      return newState;
+    });
+  };
+
+  const getRemoveIngredient = (index) => () => {
+    setIngredients((prevState) => {
+      const newState = [...prevState];
+      newState.splice(index, 1);
 
       return newState;
     });
@@ -102,6 +120,9 @@ function NewRecipe() {
                 <button type="button" onClick={getNewInstruction(index)}>
                   Add new Instruction before
                 </button>
+                <button type="button" onClick={getRemoveInstruction(index)}>
+                  Remove Instruction
+                </button>
               </li>
             );
           })}
@@ -119,6 +140,7 @@ function NewRecipe() {
                 <IngredientInput
                   value={ingredient}
                   updateValue={getHandleIngredients(index)}
+                  removeIngredient={getRemoveIngredient(index)}
                 />
               </li>
             );
