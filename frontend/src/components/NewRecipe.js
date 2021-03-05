@@ -2,17 +2,20 @@
 
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import IngredientInput from "./IngredientInput";
 import API from "../utils/API";
 
+const emptyIngredient = { amount: "", food: "" };
+
 function NewRecipe() {
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
   const [instructions, setInstructions] = useState([""]);
-  const [ingredients, setIngredients] = useState([""]);
+  const [ingredients, setIngredients] = useState([emptyIngredient]);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
 
-  const handleTitle = (e) => {
-    setTitle(e.target.value);
+  const handleName = (e) => {
+    setName(e.target.value);
   };
 
   const getHandleInstruction = (index) => (e) => {
@@ -41,10 +44,10 @@ function NewRecipe() {
     });
   };
 
-  const getHandleIngredients = (index) => (e) => {
+  const getHandleIngredients = (index) => (newValue) => {
     setIngredients((prevState) => {
       const newState = [...prevState];
-      newState.splice(index, 1, e.target.value);
+      newState.splice(index, 1, newValue);
       return newState;
     });
   };
@@ -52,7 +55,7 @@ function NewRecipe() {
   const appendIngeredient = () => {
     setIngredients((prevState) => {
       const newState = [...prevState];
-      newState.push("");
+      newState.push(emptyIngredient);
 
       return newState;
     });
@@ -62,7 +65,7 @@ function NewRecipe() {
     e.preventDefault();
     try {
       API.post("newRecipe", {
-        title,
+        name,
         instructions,
         ingredients,
       }).then((response) => {
@@ -82,8 +85,8 @@ function NewRecipe() {
     <div id="new-recipe">
       <h1>Create a new Recipe</h1>
       <span>
-        <h3 style={{ display: "inline" }}>Title: </h3>
-        <input type="text" value={title} onChange={handleTitle} />
+        <h3 style={{ display: "inline" }}>Name: </h3>
+        <input type="text" value={name} onChange={handleName} />
       </span>
       <div>
         <h3>Instructions:</h3>
@@ -113,10 +116,9 @@ function NewRecipe() {
           {ingredients.map((ingredient, index) => {
             return (
               <li key={index}>
-                <input
-                  type="text"
+                <IngredientInput
                   value={ingredient}
-                  onChange={getHandleIngredients(index)}
+                  updateValue={getHandleIngredients(index)}
                 />
               </li>
             );
