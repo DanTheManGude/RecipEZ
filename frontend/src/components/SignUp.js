@@ -1,10 +1,12 @@
 "use es6";
 
 import React, { useState } from "react";
-import { Redirect } from 'react-router-dom';
+import { Redirect } from "react-router-dom";
 import API from "../utils/API";
 
-function SignUp() {
+function SignUp(props) {
+  const { setUserId } = props;
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
@@ -12,29 +14,30 @@ function SignUp() {
 
   const handleName = (e) => {
     setUsername(e.target.value);
-  }
+  };
 
   const handlePass = (e) => {
     setPassword(e.target.value);
-  }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await API.post("createUser", {
-        "username": username,
-        "password": password
+        username: username,
+        password: password,
       });
       if (response.status == 200) {
         setSuccess(true);
+        setUserId(response.data.id);
       } else {
-        console.log('no');
+        console.log("no");
         setError(true);
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   return (
     <div id="sign-up">
@@ -44,8 +47,8 @@ function SignUp() {
         <input type="password" value={password} onChange={handlePass} />
         <input type="submit" value="Sign Up" />
       </form>
-      { error && <span>Username already taken.</span> }
-      { success && <Redirect to="/signin" />}
+      {error && <span>Username already taken.</span>}
+      {success && <Redirect to="/signin" />}
     </div>
   );
 }

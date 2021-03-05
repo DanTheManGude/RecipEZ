@@ -7,7 +7,9 @@ import API from "../utils/API";
 
 const emptyIngredient = { amount: "", food: "" };
 
-function NewRecipe() {
+function NewRecipe(props) {
+  const { userId } = props;
+
   const [name, setName] = useState("");
   const [instructions, setInstructions] = useState([""]);
   const [ingredients, setIngredients] = useState([emptyIngredient]);
@@ -86,6 +88,7 @@ function NewRecipe() {
         name,
         instructions,
         ingredients,
+        id: userId,
       }).then((response) => {
         if (response.status == 200) {
           setSuccess(true);
@@ -98,6 +101,10 @@ function NewRecipe() {
       setError(true);
     }
   };
+
+  if (!userId) {
+    return <h2>You must login to make new Recipes</h2>;
+  }
 
   return (
     <div id="new-recipe">
@@ -138,6 +145,7 @@ function NewRecipe() {
             return (
               <li key={index}>
                 <IngredientInput
+                  userId={userId}
                   value={ingredient}
                   updateValue={getHandleIngredients(index)}
                   removeIngredient={getRemoveIngredient(index)}

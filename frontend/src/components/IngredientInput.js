@@ -1,9 +1,11 @@
 "use es6";
 
 import React from "react";
+import API from "../utils/API";
 
 function IngredientInput(props) {
   const {
+    userId,
     value: { amount, food },
     updateValue,
     removeIngredient,
