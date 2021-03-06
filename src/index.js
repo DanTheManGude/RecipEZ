@@ -189,8 +189,8 @@ server.post('/api/createIngredient', async (req, res) => {
     else{
       var dbo = db.db(dbName);
       var newIngredient = {"ingredient_amount": amount, "ingredient_uuid": generatedId, "food_uuid": food_uuid};
-      dbo.collection('Recipe').updateOne({"recipe_uuid": recipe_uuid}, {$push: {"recipe_ingredients": generatedId}});
-      dbo.collection('Ingredient').insertOne(newIngredient, function(err, res){
+      dbo.collection('recipe').updateOne({"recipe_uuid": recipe_uuid}, {$push: {"recipe_ingredients": generatedId}});
+      dbo.collection('ingredient').insertOne(newIngredient, function(err, res){
         if (err){
           console.log(err);
           res.status(500).send({"error": "Couldn't enter ingredient."});
@@ -210,7 +210,7 @@ server.get('/api/getFoods', async(req, res) => {
     }
     else{
       var dbo = db.db(dbName);
-      var foods = await dbo.collection("Food").find({}).toArray();
+      var foods = await dbo.collection("food").find({}).toArray();
       db.close();
       res.status(200).send({"success": "Foods returned.", "foods": foods});
     }
