@@ -174,6 +174,49 @@ server.get('/api/getPantry', async (req, res) => {
   });
 });
 
+
+server.post('/api/createIngredient', async (req, res) => {
+  body = req.body;
+  amount = req.body.ingredient_amount;
+  food_uuid = req.body.food_uuid;
+  recipe_uuid = req.body.recipe_uuid;
+  generatedId = uuidv4();
+  mongoClient.connect(dbUrl, function(err, db) {
+    if(err) {
+      console.log(err);
+      res.status(500).send({"error": "Couldn't enter ingredient."});
+    }
+    else{
+      var dbo = db.db(dbName);
+      var newIngredient = {"ingredient_amount": amount, "ingredient_uuid": generatedId, "food_uuid": food_uuid};
+      dbo.collection('Recipe').updateOne({"recipe_uuid": recipe_uuid}, {$push: {"recipe_ingredients": generatedId}});
+      dbo.collection('Ingredient').insertOne(newIngredient, function(err, res){
+        if (err){
+          console.log(err);
+          res.status(500).send({"error": "Couldn't enter ingredient."});
+        }
+      });
+      db.close();
+      res.status(200).send({"success": "Ingredient entered."});
+    }
+  });
+});
+
+server.get('/api/getFoods', async(req, res) => {
+  mongoClient.connect(dbUrl, async function(err, db) {
+    if(err) {
+      console.log(err);
+      res.status(500).send({"error": "Couldn't get foods."});
+    }
+    else{
+      var dbo = db.db(dbName);
+      var foods = await dbo.collection("Food").find({}).toArray();
+      db.close();
+      res.status(200).send({"success": "Foods returned.", "foods": foods});
+    }
+  });
+})
+
 // Serves the frontend app
 server.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
