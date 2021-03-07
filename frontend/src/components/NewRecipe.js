@@ -84,7 +84,7 @@ function NewRecipe(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     try {
-      API.post("newRecipe", {
+      API.post("createRecipe", {
         name,
         instructions,
         ingredients,
