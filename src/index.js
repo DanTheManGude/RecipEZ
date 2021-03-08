@@ -5,7 +5,8 @@ const {
   revision,
   findUser,
   createUser,
-  getFood
+  getFood,
+  getCookbook
 } = require("./utils");
 const express = require("express");
 const path = require("path");
@@ -174,7 +175,6 @@ server.get('/api/getPantry', async (req, res) => {
   });
 });
 
-
 server.post('/api/createIngredient', async (req, res) => {
   body = req.body;
   amount = req.body.ingredient_amount;
@@ -215,6 +215,56 @@ server.get('/api/getFoods', async(req, res) => {
       res.status(200).send({"success": "Foods returned.", "foods": foods});
     }
   });
+ 
+server.post('/api/createRecipe', async (req, res) => {
+  var body = req.body;
+  const name = body.name;
+  const userId = body.userId;
+  const ingredients = body.ingredients;
+  const instructions = body.instructions;
+  const generatedId = uuidv4();
+  mongoClient.connect(dbUrl, async function(err, db) {
+    if(err){
+      console.log(err);
+      res.status(500).send({"error": "Couldn't create recipe."});
+    }
+    else{
+      var dbo = db.db(dbName);
+      const cookbookId = await getCookbook(userId);
+      const newRecipe = {"cookbook_uuid": cookbookId, "recipe_uuid": generatedId, "recipe_ingredients": ingredients, "recipe_name": name, "instructions": instructions};
+      dbo.collection('recipe').insertOne(newRecipe, function(err, document) {
+        if (err){
+          console.log(err);
+          res.status(500).send({"error": "Couldn't enter recipe."});
+        }else{
+          res.status(200).send({"success": "Recipe entered."});
+        }
+      });
+      db.close();
+    }
+  })
+});
+
+server.get('/api/searchRecipes', (req, res) => {
+  var body = req.body;
+  const keyword = body.keyword;
+  mongoClient.connect(dbUrl, function(err, db) {
+    if(err){
+      console.log(err);
+      res.status(500).send({"error": "Couldn't search recipes."});
+    } else {
+      var dbo = db.db(dbName);
+      dbo.collection('recipe').find({"recipe_name":{$regex: keyword}}).toArray(function(err, document) {
+        if (err){
+          console.log(err);
+          res.status(500).send({"error": "Couldn't search recipes."});
+        }else{
+          res.status(200).send({"recipes": document});
+        }
+      });
+    }
+    db.close();
+  })
 })
 
 // Serves the frontend app

@@ -9,6 +9,9 @@ const {
 const mongoClient = require('mongodb').MongoClient;
 require("dotenv").config();
 
+const dbName = process.env.MONGODB_NAME;
+const dbUrl = process.env.MONGODB_URI;
+
 const connect = async () => {
   const client = await mongoClient.connect(process.env.MONGODB_URI);
   const db = client.db(process.env.MONGODB_NAME);
@@ -72,6 +75,14 @@ async function getFood(uuid) {
   return food["food_name"];
 };
 
+async function getCookbook(uuid) {
+  const db = await mongoClient.connect(dbUrl);
+  var dbo = db.db(dbName);
+  const food = await dbo.collection('cookbook').findOne({"user_uuid": uuid});
+  return food["cookbook_uuid"];
+};
+
+module.exports = { ping, revision, getFood, getCookbook };
 module.exports = { 
   connect,
   reloadData,
@@ -79,5 +90,6 @@ module.exports = {
   revision,
   findUser,
   createUser,
-  getFood
+  getFood,
+  getCookbook
 };
