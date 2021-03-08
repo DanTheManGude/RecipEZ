@@ -149,8 +149,7 @@ server.delete('/api/deleteFood', (req, res) => {
 });
 
 server.get('/api/getPantry', async (req, res) => {
-  body = req.body;
-  userId = body.userId;
+  const userId = req.query.userId;
   mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
@@ -215,6 +214,7 @@ server.get('/api/getFoods', async(req, res) => {
       res.status(200).send({"success": "Foods returned.", "foods": foods});
     }
   });
+});
  
 server.post('/api/createRecipe', async (req, res) => {
   var body = req.body;
@@ -246,8 +246,7 @@ server.post('/api/createRecipe', async (req, res) => {
 });
 
 server.get('/api/searchRecipes', (req, res) => {
-  var body = req.body;
-  const keyword = body.keyword;
+  const keyword = req.query.keyword;
   mongoClient.connect(dbUrl, function(err, db) {
     if(err){
       console.log(err);
