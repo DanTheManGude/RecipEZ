@@ -88,7 +88,7 @@ function NewRecipe(props) {
         name,
         instructions,
         ingredients,
-        id: userId,
+        userId,
       }).then((response) => {
         if (response.status == 200) {
           setSuccess(true);
