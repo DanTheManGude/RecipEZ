@@ -1,12 +1,12 @@
-const { 
+const {
   cookbook,
   food,
   ingredient,
   pantry,
   recipe,
-  user 
-} = require("./test_data/data")
-const mongoClient = require('mongodb').MongoClient;
+  user,
+} = require("./test_data/data");
+const mongoClient = require("mongodb").MongoClient;
 require("dotenv").config();
 
 const dbName = process.env.MONGODB_NAME;
@@ -16,20 +16,20 @@ const connect = async () => {
   const client = await mongoClient.connect(process.env.MONGODB_URI);
   const db = client.db(process.env.MONGODB_NAME);
   return db;
-}
+};
 
 const dropDatabase = async () => {
   const db = await connect();
   db.dropDatabase();
-}
+};
 
 const populateCollection = async (db, name, data) => {
   try {
     await db.collection(name).insertMany(data);
   } catch (error) {
-    throw(error);
+    throw error;
   }
-}
+};
 
 const reloadData = async () => {
   try {
@@ -45,7 +45,7 @@ const reloadData = async () => {
   } catch (error) {
     return false;
   }
-}
+};
 require("dotenv").config();
 
 const ping = () => {
@@ -60,35 +60,35 @@ const revision = () => {
 };
 
 const findUser = async (db, username) => {
-  return await db.collection("user").findOne({"username": username});
-}
+  return await db.collection("user").findOne({ username: username });
+};
 
 const createUser = async (db, new_user) => {
   return await db.collection("user").insertOne(new_user);
-}
+};
 
 async function getFood(uuid) {
-  const db = await connect()
-  const food = await db.collection('food').findOne({"food_uuid": uuid});
+  const db = await connect();
+  const food = await db.collection("food").findOne({ food_uuid: uuid });
   return food["food_name"];
-};
+}
 
 async function getCookbookIdFromUser(uuid) {
   const db = await mongoClient.connect(dbUrl);
   var dbo = db.db(dbName);
-  const food = await dbo.collection('cookbook').findOne({"user_uuid": uuid});
+  const food = await dbo.collection("cookbook").findOne({ user_uuid: uuid });
   return food["cookbook_uuid"];
-};
+}
 
 const getCookbook = async (db, uuid) => {
-  return await db.collection("cookbook").findOne({"cookbook_uuid": uuid});
+  return await db.collection("cookbook").findOne({ cookbook_uuid: uuid });
 };
 
 const getIngredient = async (db, uuid) => {
-  return await db.collection("ingredient").findOne({"ingredient_uuid": uuid});
+  return await db.collection("ingredient").findOne({ ingredient_uuid: uuid });
 };
 
-module.exports = { 
+module.exports = {
   connect,
   reloadData,
   ping,
@@ -98,5 +98,5 @@ module.exports = {
   getFood,
   getCookbookIdFromUser,
   getCookbook,
-  getIngredient
+  getIngredient,
 };
