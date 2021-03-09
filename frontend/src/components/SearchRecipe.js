@@ -7,10 +7,10 @@ const Search = (props) => {
   const { query, onChange, search } = props;
 
   return (
-    <div>
+    <form onSubmit={search}>
       <input type="text" value={query} onChange={onChange} />
-      <button onClick={search}>Search Recipes</button>
-    </div>
+      <input type="submit" value="Search Recipes" />
+    </form>
   )
 }
 
@@ -18,7 +18,7 @@ const Recipe = ({props}) => {
   const { cookbook, name, ingredients, instructions } = props;
   return (
     <div>
-      <h3>{name} found in {cookbook}</h3>
+      <h3>"{name}" found in "{cookbook}"</h3>
       <h4>Ingredients</h4>
       <ul>
         {ingredients.map((ingredient, i) => <li key={i}>{ingredient.amount}: {ingredient.name}</li>)}
@@ -31,32 +31,44 @@ const Recipe = ({props}) => {
   )
 }
 
-const Results = ({results, setResults}) => {
-  const clearResults = () => {
-    setResults([]);
-  }
-
+const Results = ({results}) => {
   return (
     <>
-      {results.length > 0 && <button type="button" onClick={clearResults}>Clear Search</button>}
-      {results.map((result, i) => <Recipe key={i} props={result} />)}
+      Found {results.length} recipes.
+      {results.map((result, i) => <Recipe key={result.name} props={result} />)}
     </>
-  )
+  );
+}
+
+const ClearButton = ({clearResults}) => {
+  return (
+    <button type="button" onClick={clearResults}>Clear Results</button>
+  );
 }
 
 function SignIn(props) {
   // const { userId } = props;
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
-  const [hasResult, setHasResult] = useState(true);
+  const [hasSearched, setHasSearched] = useState(false);
   const [error, setError] = useState("");
+
+  const clearResults = () => {
+    setResults([]);
+    setHasSearched(false);
+  };
+
 
   const handleQuery = (e) => {
     setQuery(e.target.value);
+    if (error !== "") {
+      setError("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setHasSearched(true);
     try {
       const response = await API.get("searchRecipes", {
         params: {
@@ -65,12 +77,7 @@ function SignIn(props) {
       });
       if (response.status == 200) {
         setError(false);
-        if (response.data.recipes.length > 0) {
-          setHasResult(true);
-          setResults(response.data.recipes);
-        } else {
-          setHasResult(false);
-        }
+        setResults(response.data.recipes);
       } else {
         setError(response.error);
       }
@@ -83,7 +90,8 @@ function SignIn(props) {
     <div id="search-recipe">
       <h1>Recipe Search</h1>
       <Search value={query} onChange={handleQuery} search={handleSubmit} />
-      {hasResult ? <Results results={results} setResults={setResults} /> : <>No recipes found.</>}
+      {hasSearched && <ClearButton clearResults={clearResults} />}
+      {hasSearched && <Results results={results} setResults={setResults} />}
       {error && <>{error}</>}
     </div>
   );
