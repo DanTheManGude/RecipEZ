@@ -1,6 +1,7 @@
 const cookbook = [
   {
     "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb31e434f",
+    "cookbook_name": "Good Eats",
     "user_uuid": "8d17eb94-7c0d-4987-86b3-411151df29b3"
   }
 ];
@@ -177,7 +178,7 @@ const recipe = [
     ]
   },
   {
-    "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb3",
+    "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb31e434f",
     "recipe_uuid": "35d60605-1789-42cc-bc3a-b351e5ad5a0c",
     "recipe_ingredients": [
       "0b26937f-6842-423f-871e-8fffb69fc695",
