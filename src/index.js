@@ -6,7 +6,9 @@ const {
   findUser,
   createUser,
   getFood,
-  getCookbook
+  getCookbookIdFromUser,
+  getCookbook,
+  getIngredient
 } = require("./utils");
 const express = require("express");
 const path = require("path");
@@ -66,7 +68,7 @@ server.post("/api/signinUser", async (req, res, next) => {
     const db = await connect();
     const user = await findUser(db, username);
     if (user.password === password) {
-      return res.send({"id": user._id});
+      return res.send({"id": user.user_uuid});
     }
     res.status(401).send({"error": "Invalid username or password."});
   } catch (error) {
@@ -149,8 +151,7 @@ server.delete('/api/deleteFood', (req, res) => {
 });
 
 server.get('/api/getPantry', async (req, res) => {
-  body = req.body;
-  userId = body.userId;
+  const userId = req.query.userId;
   mongoClient.connect(dbUrl, function(err, db) {
     if(err) {
       console.log(err);
@@ -215,6 +216,7 @@ server.get('/api/getFoods', async(req, res) => {
       res.status(200).send({"success": "Foods returned.", "foods": foods});
     }
   });
+});
  
 server.post('/api/createRecipe', async (req, res) => {
   var body = req.body;
@@ -230,7 +232,7 @@ server.post('/api/createRecipe', async (req, res) => {
     }
     else{
       var dbo = db.db(dbName);
-      const cookbookId = await getCookbook(userId);
+      const cookbookId = await getCookbookIdFromUser(userId);
       const newRecipe = {"cookbook_uuid": cookbookId, "recipe_uuid": generatedId, "recipe_ingredients": ingredients, "recipe_name": name, "instructions": instructions};
       dbo.collection('recipe').insertOne(newRecipe, function(err, document) {
         if (err){
@@ -245,27 +247,33 @@ server.post('/api/createRecipe', async (req, res) => {
   })
 });
 
-server.get('/api/searchRecipes', (req, res) => {
-  var body = req.body;
-  const keyword = body.keyword;
-  mongoClient.connect(dbUrl, function(err, db) {
-    if(err){
-      console.log(err);
-      res.status(500).send({"error": "Couldn't search recipes."});
-    } else {
-      var dbo = db.db(dbName);
-      dbo.collection('recipe').find({"recipe_name":{$regex: keyword}}).toArray(function(err, document) {
-        if (err){
-          console.log(err);
-          res.status(500).send({"error": "Couldn't search recipes."});
-        }else{
-          res.status(200).send({"recipes": document});
-        }
-      });
-    }
-    db.close();
-  })
-})
+server.get('/api/searchRecipes', async (req, res) => {
+  const keyword = req.query.keyword;
+  try {
+    const db = await connect();
+    const searchResults = await db.collection('recipe').find({"recipe_name":{$regex: keyword}}).toArray();
+    let recipes = await Promise.all(searchResults.map(async (data) => {
+      const cookbook = await getCookbook(db, data.cookbook_uuid);
+      return {
+        cookbook: cookbook.cookbook_name,
+        name: data.recipe_name,
+        ingredients: await Promise.all(data.recipe_ingredients.map(async (uuid) => {
+          let ingredient = await getIngredient(db, uuid);
+          let food = await getFood(ingredient.food_uuid);
+          return {
+            name: food,
+            amount: ingredient.ingredient_amount
+          }
+        })),
+        instructions: data.instructions
+      };
+    }));
+    res.status(200).send({"recipes": recipes});
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({error: "Couldn't search recipes."});
+  }
+});
 
 // Serves the frontend app
 server.get("/*", (req, res) => {

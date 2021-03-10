@@ -6,6 +6,8 @@ import { Route, Redirect, Switch } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 
+import SearchRecipe from "./SearchRecipe.js"
+
 import Admin from "./Admin";
 import Home from "./Home";
 
@@ -16,6 +18,8 @@ function Routes() {
     <Switch>
       <Route path="/signin" component={SignIn} />
       <Route path="/signup" component={SignUp} />
+
+      <Route path="/searchRecipe" component={SearchRecipe} />
 
       <Route exact path="/admin" component={Admin} />
 

@@ -14,6 +14,9 @@ function App() {
         <Link to="/signin">
           <li>Sign In</li>
         </Link>
+        <Link to="/searchRecipe">
+          <li>Recipe Search</li>
+        </Link>
         <Link to="/home">
           <li>Home</li>
         </Link>

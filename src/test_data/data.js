@@ -1,6 +1,7 @@
 const cookbook = [
   {
     "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb31e434f",
+    "cookbook_name": "Good Eats",
     "user_uuid": "8d17eb94-7c0d-4987-86b3-411151df29b3"
   }
 ];
@@ -165,17 +166,35 @@ const recipe = [
       "a98c85fb-e1a5-4e04-bc6c-c9b2f97f2aa4",
       "8b2da18b-6044-4c66-a38b-a5b913cf2ec1"
     ],
-    "recipe_name": "Cookies"
+    "recipe_name": "Cookies",
+    "instructions": [
+      "Measure ingredients.",
+      "Mix dry ingredients.",
+      "Add wet ingredients and combine to form dough.",
+      "Scoop cookie dough onto baking sheet.",
+      "Set oven to 350 degrees F.",
+      "Bake cookies for 8-10 minutes.",
+      "Let cookies rest for 5 minutes."
+    ]
   },
   {
-    "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb3",
+    "cookbook_uuid": "478dbf45-0af1-4a08-81c8-9c5fb31e434f",
     "recipe_uuid": "35d60605-1789-42cc-bc3a-b351e5ad5a0c",
     "recipe_ingredients": [
       "0b26937f-6842-423f-871e-8fffb69fc695",
       "915dd072-7c87-43fb-9c97-f425eb32dac0",
       "397ff478-1e20-46c9-a796-6b3a3e2af243"
     ],
-    "recipe_name": "Grilled Cheese"
+    "recipe_name": "Grilled Cheese",
+    "instructions": [
+      "Butter two slices of bread.",
+      "Toast bread on skillet.",
+      "Add cheese onto bread.",
+      "Place one slice of bread over the other.",
+      "Serve on plate.",
+      "Slice in half.",
+      "Enjoy!"
+    ]
   }
 ]
 

@@ -60,9 +60,7 @@ const revision = () => {
 };
 
 const findUser = async (db, username) => {
-  return await db.collection("user").findOne({
-    "username": username
-  });
+  return await db.collection("user").findOne({"username": username});
 }
 
 const createUser = async (db, new_user) => {
@@ -75,14 +73,21 @@ async function getFood(uuid) {
   return food["food_name"];
 };
 
-async function getCookbook(uuid) {
+async function getCookbookIdFromUser(uuid) {
   const db = await mongoClient.connect(dbUrl);
   var dbo = db.db(dbName);
   const food = await dbo.collection('cookbook').findOne({"user_uuid": uuid});
   return food["cookbook_uuid"];
 };
 
-module.exports = { ping, revision, getFood, getCookbook };
+const getCookbook = async (db, uuid) => {
+  return await db.collection("cookbook").findOne({"cookbook_uuid": uuid});
+};
+
+const getIngredient = async (db, uuid) => {
+  return await db.collection("ingredient").findOne({"ingredient_uuid": uuid});
+};
+
 module.exports = { 
   connect,
   reloadData,
@@ -91,5 +96,7 @@ module.exports = {
   findUser,
   createUser,
   getFood,
-  getCookbook
+  getCookbookIdFromUser,
+  getCookbook,
+  getIngredient
 };
