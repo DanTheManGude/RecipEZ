@@ -293,6 +293,7 @@ server.get("/api/searchRecipes", async (req, res) => {
             })
           ),
           instructions: data.instructions,
+          recipeId: data.id,
         };
       })
     );
