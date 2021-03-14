@@ -303,6 +303,24 @@ server.get("/api/searchRecipes", async (req, res) => {
   }
 });
 
+server.delete('/api/deleteRecipe', async (req, res) => {
+  body = req.body;
+  recipeId = body.recipe_uuid;
+  mongoClient.connect(dbUrl, function (err, db) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "Couldn't delete recipe." });
+    } else {
+      var dbo = db.db(dbName);
+      dbo
+        .collection("recipe")
+        .deleteOne({ recipe_uuid: recipeId });
+      db.close();
+    }
+  });
+  res.status(200).send({ success: "Recipe deleted." });
+});
+
 // Serves the frontend app
 server.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
