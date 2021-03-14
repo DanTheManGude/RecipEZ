@@ -321,6 +321,53 @@ server.delete('/api/deleteRecipe', async (req, res) => {
   res.status(200).send({ success: "Recipe deleted." });
 });
 
+server.post('/api/rateRecipe', async (req, res) => {
+  body = req.body;
+  recipeId = body.recipe_uuid;
+  ratingValue = body.rating_value;
+  userId = body.user_uuid;
+  generatedId = uuidv4();
+  mongoClient.connect(dbUrl, function (err, db) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "Couldn't enter rating." });
+    } else {
+      var dbo = db.db(dbName);
+      var newRating = {
+        rating_uuid: generatedId,
+        user_uuid: userId,
+        recipe_uuid: recipeId,
+        rating_value: ratingValue
+      };
+      dbo
+        .collection("rating")
+        .insertOne(newRating, function (err, res) {
+          if (err) {
+            console.log(err);
+            res.status(500).send({ error: "Couldn't enter rating." });
+          }
+        });
+      db.close();
+      res.status(200).send({ success: "Rating entered." });
+    }
+  });
+});
+
+server.get('/api/getRatings', async (req, res) => {
+  recipeId = req.query.recipe_uuid;
+  mongoClient.connect(dbUrl, async function (err, db) {
+    if (err) {
+      console.log(err);
+      res.status(500).send({ error: "Couldn't get ratings." });
+    } else {
+      var dbo = db.db(dbName);
+      var ratings = await dbo.collection("rating").find({ recipe_uuid: recipeId }).toArray();
+      db.close();
+      res.status(200).send({ success: "Ratings returned.", ratings: ratings });
+    }
+  });
+});
+
 // Serves the frontend app
 server.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, BUILDPATH, "index.html"));
