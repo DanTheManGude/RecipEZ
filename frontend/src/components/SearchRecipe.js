@@ -35,7 +35,7 @@ const ClearButton = ({ clearResults }) => {
   );
 };
 
-function SignIn(props) {
+function SearchRecipe(props) {
   // const { userId } = props;
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -85,4 +85,4 @@ function SignIn(props) {
   );
 }
 
-export default SignIn;
+export default SearchRecipe;

@@ -8,7 +8,8 @@ To get hot reloading for both servers, `npm run dev`.
 ### Environment Variables
 Create a .env file at the root directory with the following.
 ```
-MONGODB_URI='mongodb://localhost:27017/RecipEZ_DB'
+MONGODB_URI="mongodb://localhost:27017/"
+MONGODB_NAME="RecipEZ_DB"
 ```
 
 ### Running MongoDB
