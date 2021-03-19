@@ -7,12 +7,13 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import NewRecipe from "./NewRecipe";
 
-import SearchRecipe from "./SearchRecipe.js"
+import SearchRecipe from "./SearchRecipe.js";
 
 import Admin from "./Admin";
 import Home from "./Home";
 
 import NotFound from "./NotFound";
+import ViewRecipe from "./ViewRecipe";
 
 function Routes() {
   const [userId, setUserId] = useState(null);
@@ -25,6 +26,11 @@ function Routes() {
       <Route path="/newRecipe" render={() => <NewRecipe userId={userId} />} />
 
       <Route path="/searchRecipe" component={SearchRecipe} />
+
+      <Route
+        path="/viewRecipe/:name"
+        render={(props) => <ViewRecipe userId={userId} {...props} />}
+      />
 
       <Route exact path="/admin" component={Admin} />
 
