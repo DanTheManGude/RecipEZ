@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import API from "../utils/API";
 import Recipe from "./Recipe";
+import FormButton from "./FormButton";
 
 function ViewRecipe(props) {
   const {
@@ -41,7 +42,7 @@ function ViewRecipe(props) {
     try {
       API.delete("deleteRecipe", {
         params: {
-          recipeId: recipeValues.recipeId,
+          recipe_uuid: recipeValues.recipeId,
         },
       }).then((response) => {
         if (response.status == 200) {
@@ -59,11 +60,9 @@ function ViewRecipe(props) {
 
   if (recipeValues) {
     return (
-      <div>
+      <div className="page">
         <Recipe {...recipeValues} />
-        <button type="button" onClick={handleDelete}>
-          Delete Recipe
-        </button>
+        <FormButton type="button" onClick={handleDelete} text="Delete Recipe" />
       </div>
     );
   }

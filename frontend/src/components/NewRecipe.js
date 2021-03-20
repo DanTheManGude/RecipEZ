@@ -2,6 +2,12 @@
 
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import FormButton from "./FormButton";
 import IngredientInput from "./IngredientInput";
 import API from "../utils/API";
 
@@ -63,7 +69,7 @@ function NewRecipe(props) {
     });
   };
 
-  const appendIngeredient = () => {
+  const appendIngredient = () => {
     setIngredients((prevState) => {
       const newState = [...prevState];
       newState.push(emptyIngredient);
@@ -103,43 +109,36 @@ function NewRecipe(props) {
   };
 
   if (!userId) {
-    return <h2>You must login to make new Recipes</h2>;
+    return <Typography variant="h5">You must login to make new Recipes</Typography>;
   }
 
   return (
-    <div id="new-recipe">
-      <h1>Create a new Recipe</h1>
-      <span>
-        <h3 style={{ display: "inline" }}>Name: </h3>
-        <input type="text" value={name} onChange={handleName} />
-      </span>
+    <div className="page" id="new-recipe">
+      <Typography variant="h4">Create a new Recipe</Typography>
       <div>
-        <h3>Instructions:</h3>
+        <TextField type="text" value={name} label="Recipe Name" onChange={handleName} />
+        <Typography variant="h6">Instructions:</Typography>
         <ol>
           {instructions.map((instruction, index) => {
             return (
               <li key={index}>
-                <input
-                  type="text"
-                  value={instruction}
-                  onChange={getHandleInstruction(index)}
-                />
-                <button type="button" onClick={getNewInstruction(index)}>
-                  Add new Instruction before
-                </button>
-                <button type="button" onClick={getRemoveInstruction(index)}>
-                  Remove Instruction
-                </button>
+                <TextField type="text" value={instruction} label="Instruction" onChange={getHandleInstruction(index)} />
+                <IconButton onClick={getNewInstruction(index)}>
+                  <AddIcon />
+                </IconButton>
+                <IconButton onClick={getRemoveInstruction(index)}>
+                  <DeleteIcon />
+                </IconButton>
               </li>
             );
           })}
         </ol>
-        <button type="button" onClick={appendInstruction}>
-          Add new Instruction at the end
-        </button>
+        <FormButton type="button" onClick={appendInstruction}
+          text="Add New Instruction"
+        />
       </div>
       <div>
-        <h3>Ingredients:</h3>
+        <Typography variant="h6">Ingredients:</Typography>
         <ol>
           {ingredients.map((ingredient, index) => {
             return (
@@ -154,13 +153,15 @@ function NewRecipe(props) {
             );
           })}
         </ol>
-        <button type="button" onClick={appendIngeredient}>
-          Add new Ingeredient
-        </button>
+        <FormButton type="button" onClick={appendIngredient}
+          text="Add new Ingredient"
+        />
       </div>
-      <button type="button" onClick={handleSubmit}>
-        Submit new Recipe
-      </button>
+      <div>
+        <FormButton type="button" onClick={handleSubmit}
+          text="Submit new Recipe"
+        />
+      </div>
       {error && <span>Ruh roh, something went wrong</span>}
       {success && <Redirect to="/home" />}
     </div>

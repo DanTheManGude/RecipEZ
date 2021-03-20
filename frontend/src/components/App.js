@@ -27,34 +27,34 @@ function App() {
     <div id="app">
       <NavMenu position="static">
         <Toolbar>
-          <Link to="/home">
+          <Link id='home-link' to="/home">
             <LinkButton>
               <Typography variant="h6">RecipeZ</Typography>
             </LinkButton>
           </Link>
-          {userId === null ?
-            <>
-              <Link to="/signup">
-                <LinkButton>Sign Up</LinkButton>
-              </Link>
-              <Link to="/signin">
-                <LinkButton>Sign In</LinkButton>
-              </Link>
-            </>
-            :
-            <LinkButton onClick={() => setUserId(null)}>Sign Out</LinkButton>
-          }
-          <Link to="/searchRecipe">
-            <LinkButton>Recipe Search</LinkButton>
-          </Link>
-          <Link to="/newRecipe">
-            <LinkButton>New Recipe</LinkButton>
-          </Link>
+          <div className="links">
+            {userId === null ?
+              <>
+                <Link to="/signup">
+                  <LinkButton>Sign Up</LinkButton>
+                </Link>
+                <Link to="/signin">
+                  <LinkButton>Sign In</LinkButton>
+                </Link>
+              </>
+              :
+              <LinkButton onClick={() => setUserId(null)}>Sign Out</LinkButton>
+            }
+            <Link to="/searchRecipe">
+              <LinkButton>Recipe Search</LinkButton>
+            </Link>
+            <Link to="/newRecipe">
+              <LinkButton>New Recipe</LinkButton>
+            </Link>
+          </div>
         </Toolbar>
       </NavMenu>
-      <ul>
-        <Routes userId={userId} setUserId={setUserId} />
-      </ul>
+      <Routes userId={userId} setUserId={setUserId} />
     </div>
   );
 }

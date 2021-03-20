@@ -1,17 +1,22 @@
 "use es6";
 
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import FormButton from "./FormButton";
 import API from "../utils/API";
 
-import Recipe from "./Recipe";
-
 const Search = (props) => {
-  const { query, onChange, search } = props;
+  const { query, onChange, search, hasSearched, clearResults } = props;
 
   return (
     <form onSubmit={search}>
-      <input type="text" value={query} onChange={onChange} />
-      <input type="submit" value="Search Recipes" />
+      <div className="search-actions">
+        <TextField type="text" value={query} label="Query" onChange={onChange} />
+        <FormButton type="submit" text="Search Recipes" />
+        <FormButton disabled={!hasSearched} type="button" onClick={clearResults} text="Clear Results" />
+      </div>
     </form>
   );
 };
@@ -19,24 +24,21 @@ const Search = (props) => {
 const Results = ({ results }) => {
   return (
     <>
-      Found {results.length} recipes.
-      {results.map((result, i) => (
-        <Recipe key={result.name} {...result} />
-      ))}
+      <div>Found {results.length} recipes.</div>
+      <ol>
+        {results.map((result, i) => (
+          <li key={result.name} >
+            <Link to={`/viewRecipe/${result.name}`}>
+              {result.name} found in "{result.cookbook}"
+            </Link>
+          </li>
+        ))}
+      </ol>
     </>
   );
 };
 
-const ClearButton = ({ clearResults }) => {
-  return (
-    <button type="button" onClick={clearResults}>
-      Clear Results
-    </button>
-  );
-};
-
-function SearchRecipe(props) {
-  // const { userId } = props;
+function SearchRecipe() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
@@ -75,10 +77,15 @@ function SearchRecipe(props) {
   };
 
   return (
-    <div id="search-recipe">
-      <h1>Recipe Search</h1>
-      <Search value={query} onChange={handleQuery} search={handleSubmit} />
-      {hasSearched && <ClearButton clearResults={clearResults} />}
+    <div className="page" id="search-recipe">
+      <Typography variant="h4">Recipe Search</Typography>
+      <Search 
+        value={query}
+        onChange={handleQuery}
+        search={handleSubmit}
+        hasSearched={hasSearched}
+        clearResults={clearResults}
+      />
       {hasSearched && <Results results={results} setResults={setResults} />}
       {error && <>{error}</>}
     </div>

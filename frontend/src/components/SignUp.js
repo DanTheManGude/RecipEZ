@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
 import API from "../utils/API";
 
 function SignUp(props) {
@@ -39,15 +42,15 @@ function SignUp(props) {
   };
 
   return (
-    <div id="sign-up">
-      <h1>Sign Up</h1>
+    <div className="page" id="sign-up">
+      <Typography variant="h4">Sign Up</Typography>
       <form onSubmit={handleSubmit}>
-        <input type="text" value={username} onChange={handleName} />
-        <input type="password" value={password} onChange={handlePass} />
-        <input type="submit" value="Sign Up" />
+        <TextField type="text" value={username} label="Username" onChange={handleName} />
+        <TextField type="password" value={password} label="Password" onChange={handlePass} />
+        <Button type="submit">Sign Up</Button>
       </form>
       {error && <span>Username already taken.</span>}
-      {success && <Redirect to="/signin" />}
+      {success && <Redirect to="/home" />}
     </div>
   );
 }
