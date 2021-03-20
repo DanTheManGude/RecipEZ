@@ -21,7 +21,7 @@ const Results = ({ results }) => {
     <>
       Found {results.length} recipes.
       {results.map((result, i) => (
-        <Recipe key={result.name} props={result} />
+        <Recipe key={result.name} {...result} />
       ))}
     </>
   );

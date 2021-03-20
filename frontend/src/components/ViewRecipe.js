@@ -60,7 +60,7 @@ function ViewRecipe(props) {
   if (recipeValues) {
     return (
       <div>
-        <Recipe props={recipeValues} />
+        <Recipe {...recipeValues} />
         <button type="button" onClick={handleDelete}>
           Delete Recipe
         </button>

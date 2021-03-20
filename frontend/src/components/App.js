@@ -1,38 +1,59 @@
 "use es6";
 
-import React from "react";
+import React, { useState } from "react";
 import Routes from "./Routes.js";
 import { Link } from "react-router-dom";
+import { styled } from '@material-ui/core/styles';
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+
+const LinkButton = styled(Button)({
+  color: 'white',
+});
+
+const NavMenu = styled(AppBar)({
+  '& a': {
+    textDecoration: 'none'
+  }
+});
+
 function App() {
+  const [userId, setUserId] = useState(null);
+
   return (
     <div id="app">
-      <AppBar position="static">
+      <NavMenu position="static">
         <Toolbar>
-          <Typography variant="h6">RecipeZ</Typography>
-          <Link to="/signup">
-            <Button color="">Sign Up</Button>
+          <Link to="/home">
+            <LinkButton>
+              <Typography variant="h6">RecipeZ</Typography>
+            </LinkButton>
           </Link>
-          <Link to="/signin">
-            <Button color="">Sign In</Button>
-          </Link>
+          {userId === null ?
+            <>
+              <Link to="/signup">
+                <LinkButton>Sign Up</LinkButton>
+              </Link>
+              <Link to="/signin">
+                <LinkButton>Sign In</LinkButton>
+              </Link>
+            </>
+            :
+            <LinkButton onClick={() => setUserId(null)}>Sign Out</LinkButton>
+          }
           <Link to="/searchRecipe">
-            <Button color="">Recipe Search</Button>
+            <LinkButton>Recipe Search</LinkButton>
           </Link>
           <Link to="/newRecipe">
-            <Button color="">New Recipe</Button>
-          </Link>
-          <Link to="/home">
-            <Button color="">Home</Button>
+            <LinkButton>New Recipe</LinkButton>
           </Link>
         </Toolbar>
-      </AppBar>
+      </NavMenu>
       <ul>
-        <Routes />
+        <Routes userId={userId} setUserId={setUserId} />
       </ul>
     </div>
   );

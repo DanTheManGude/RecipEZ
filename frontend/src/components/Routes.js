@@ -1,6 +1,6 @@
 "use es6";
 
-import React, { useState } from "react";
+import React from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 
 import SignIn from "./SignIn";
@@ -15,8 +15,8 @@ import Home from "./Home";
 import NotFound from "./NotFound";
 import ViewRecipe from "./ViewRecipe";
 
-function Routes() {
-  const [userId, setUserId] = useState(null);
+function Routes(props) {
+  const { userId, setUserId } = props;
 
   return (
     <Switch>

@@ -3,7 +3,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function Recipe({ props }) {
+function Recipe(props) {
   const { cookbook, name, ingredients, instructions } = props;
   return (
     <div>

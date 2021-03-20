@@ -235,7 +235,6 @@ server.get("/api/getFoods", async (req, res) => {
 
 server.post("/api/createRecipe", async (req, res) => {
   var body = req.body;
-  console.log(body);
   const name = body.name;
   const userId = body.userId;
   const ingredients = body.ingredients;

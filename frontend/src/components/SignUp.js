@@ -31,7 +31,6 @@ function SignUp(props) {
         setSuccess(true);
         setUserId(response.data.id);
       } else {
-        console.log("no");
         setError(true);
       }
     } catch (error) {
