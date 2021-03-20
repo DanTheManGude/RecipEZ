@@ -1,21 +1,18 @@
 "use es6";
 
 import React from "react";
-import { Link } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
 
 function Recipe(props) {
   const { cookbook, name, ingredients, instructions } = props;
-
   return (
     <div>
-      <h3>
-        "
-        <Link to={`/viewRecipe/${name}`}>
-          <li>{name}</li>
-        </Link>
-        found in "{cookbook}"
-      </h3>
-      <h4>Ingredients</h4>
+      <Typography variant="h5">
+        {name} from "{cookbook}"
+      </Typography>
+      <Typography variant="h6">
+        Ingredients
+      </Typography>
       <ul>
         {ingredients.map((ingredient, i) => (
           <li key={i}>
@@ -23,7 +20,9 @@ function Recipe(props) {
           </li>
         ))}
       </ul>
-      <h4>Instructions</h4>
+      <Typography variant="h6">
+        Instructions
+      </Typography>
       <ol>
         {instructions.map((instruction, i) => (
           <li key={i}>{instruction}</li>

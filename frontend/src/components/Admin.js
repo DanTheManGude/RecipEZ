@@ -1,6 +1,7 @@
 "use es6";
 
 import React, { useEffect, useState } from "react";
+import Typography from "@material-ui/core/Typography";
 import API from "../utils/API";
 
 function Admin() {
@@ -17,8 +18,8 @@ function Admin() {
   });
 
   return (
-    <div id="Admin">
-      <h1>Admin</h1>
+    <div className="page" id="Admin">
+      <Typography variant="h4">Admin</Typography>
       {JSON.stringify(content)}
     </div>
   );

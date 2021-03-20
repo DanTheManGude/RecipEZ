@@ -1,7 +1,9 @@
 "use es6";
 
 import React from "react";
-import API from "../utils/API";
+import TextField from "@material-ui/core/TextField";
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from '@material-ui/icons/Delete';
 
 function IngredientInput(props) {
   const {
@@ -22,11 +24,11 @@ function IngredientInput(props) {
   return (
     <div id="ingredient-value">
       <span>
-        Amount: <input type="text" value={amount} onChange={handleAmount} />
-        Food: <input type="text" value={food} onChange={handleFood} />
-        <button type="button" onClick={removeIngredient}>
-          Remove Ingredient
-        </button>
+        <TextField type="text" value={amount} label="Amount" onChange={handleAmount} />
+        <TextField type="text" value={food} label="Food" onChange={handleFood} />
+        <IconButton onClick={removeIngredient}>
+          <DeleteIcon />
+        </IconButton>
       </span>
     </div>
   );

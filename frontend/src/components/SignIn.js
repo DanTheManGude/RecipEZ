@@ -2,6 +2,9 @@
 
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import FormButton from './FormButton';
 import API from "../utils/API";
 
 function SignIn(props) {
@@ -39,12 +42,12 @@ function SignIn(props) {
   };
 
   return (
-    <div id="sign-in">
-      <h1>Sign In</h1>
+    <div className="page" id="sign-in">
+      <Typography variant="h4">Sign In</Typography>
       <form onSubmit={handleSubmit}>
-        <input type="text" value={username} onChange={handleName} />
-        <input type="password" value={password} onChange={handlePass} />
-        <input type="submit" value="Sign In" />
+        <TextField type="text" value={username} label="Username" onChange={handleName} />
+        <TextField type="password" value={password} label="Password" onChange={handlePass} />
+        <FormButton type="submit" text="Sign In" />
       </form>
       {error && <span>Incorrect username or password.</span>}
       {success && <Redirect to="/home" />}

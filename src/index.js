@@ -235,7 +235,6 @@ server.get("/api/getFoods", async (req, res) => {
 
 server.post("/api/createRecipe", async (req, res) => {
   var body = req.body;
-  console.log(body);
   const name = body.name;
   const userId = body.userId;
   const ingredients = body.ingredients;
@@ -304,9 +303,8 @@ server.get("/api/searchRecipes", async (req, res) => {
   }
 });
 
-server.delete('/api/deleteRecipe', async (req, res) => {
-  body = req.body;
-  recipeId = body.recipe_uuid;
+server.delete('/api/deleteRecipe', (req, res) => {
+  const recipeId = req.query.recipe_uuid;
   mongoClient.connect(dbUrl, function (err, db) {
     if (err) {
       console.log(err);
